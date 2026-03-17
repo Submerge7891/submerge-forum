@@ -1,4 +1,9 @@
-// ========== 自定义消息提示核心函数 ==========
+// ========== 全局配置 ==========
+// API_BASE 从 config.js 引入
+// 注意：需要在 index.html 中先引入 config.js，再引入 script.js
+const API_BASE = typeof API_BASE !== 'undefined' ? API_BASE : '';
+
+// ========== 自定义消息提示 ==========
 function showToast(message, type = 'info', duration = 3000) {
     const toast = document.getElementById('customToast');
     toast.textContent = message;
@@ -13,7 +18,7 @@ function showToast(message, type = 'info', duration = 3000) {
     }, duration);
 }
 
-// ========== 自定义确认框核心函数 ==========
+// ========== 自定义确认框 ==========
 function showConfirm(title, isInput = false, callback) {
     const confirmBox = document.getElementById('customConfirm');
     const confirmTitle = document.getElementById('confirmTitle');
@@ -21,17 +26,13 @@ function showConfirm(title, isInput = false, callback) {
     const confirmOk = document.getElementById('confirmOk');
     const confirmCancel = document.getElementById('confirmCancel');
     
-    // 设置标题
     confirmTitle.textContent = title;
-    // 显示/隐藏输入框
     confirmInput.style.display = isInput ? 'block' : 'none';
     confirmInput.value = '';
     
-    // 打开确认框
     confirmBox.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     
-    // 绑定确认事件
     const okHandler = () => {
         const inputValue = confirmInput.value.trim();
         callback(true, isInput ? inputValue : '');
@@ -41,7 +42,6 @@ function showConfirm(title, isInput = false, callback) {
         confirmCancel.removeEventListener('click', cancelHandler);
     };
     
-    // 绑定取消事件
     const cancelHandler = () => {
         callback(false, '');
         confirmBox.style.display = 'none';
@@ -53,7 +53,6 @@ function showConfirm(title, isInput = false, callback) {
     confirmOk.addEventListener('click', okHandler);
     confirmCancel.addEventListener('click', cancelHandler);
     
-    // 点击外部关闭
     confirmBox.addEventListener('click', (e) => {
         if (e.target === confirmBox) {
             cancelHandler();
@@ -61,260 +60,76 @@ function showConfirm(title, isInput = false, callback) {
     });
 }
 
-// 初始化数据存储
-function initStorage() {
-    // 用户数据
-    if (!localStorage.getItem('users')) {
-        // 默认管理员账号
-        const adminUser = {
-            username: 'Submerge',
-            password: 'syhnqqsjx1019',
-            email: 'admin@example.com',
-            isAdmin: true,
-            avatar: 'S',
-            collections: [],
-            likedPosts: [],
-            likedComments: []
-        };
-        localStorage.setItem('users', JSON.stringify([adminUser]));
-    }
-
-    // 帖子数据
-    if (!localStorage.getItem('posts')) {
-        const defaultPosts = [
-            {
-                id: 1,
-                title: '这个讨论区的橙色主题太好看了，和 boyacoding.cn 一模一样！',
-                content: `# 讨论区主题分享
-                
-这个橙色主题真的太好看了，分享一下实现思路：
-
-1. 使用CSS变量定义主题色
-\`\`\`css
-:root {
-    --main-color: #ff7c24;
-    --main-hover: #ff6a00;
-}
-\`\`\`
-
-2. 按钮和高亮元素使用主题色
-3. 悬停效果增强交互体验
-
-希望对大家有帮助！`,
-                author: 'Submerge__l',
-                time: new Date().toLocaleString(),
-                tags: ['主题分享', '前端'],
-                likes: 12,
-                comments: [],
-                reports: [],
-                isBanned: false
-            },
-            {
-                id: 2,
-                title: '求推荐好用的前端开发工具',
-                content: `## 前端开发工具求助
-
-最近在做静态页面开发，想找一些高效的编辑器和插件，大家有什么好的推荐吗？
-
-### 我目前在用的：
-- VS Code
-- Chrome开发者工具
-- PostCSS
-
-希望能找到更多提升效率的工具！`,
-                author: '路人甲',
-                time: new Date(Date.now() - 600000).toLocaleString(),
-                tags: ['工具推荐', '开发'],
-                likes: 8,
-                comments: [],
-                reports: [],
-                isBanned: false
-            },
-            {
-                id: 3,
-                title: 'HTML+CSS零基础入门学习路线',
-                content: `# HTML+CSS零基础学习路线
-
-零基础想入门前端，从HTML和CSS开始，分享一下我的学习路线：
-
-### 阶段1：基础语法
-- HTML标签学习
-- CSS选择器和样式
-- 盒模型理解
-
-### 阶段2：实战练习
-- 简单页面布局
-- 响应式设计
-- 常见组件实现
-
-### 阶段3：进阶提升
-- Flex/Grid布局
-- CSS动画
-- 预处理器
-
-有没有更好的学习资源推荐？`,
-                author: '编程小白',
-                time: new Date(Date.now() - 1800000).toLocaleString(),
-                tags: ['学习路线', '零基础'],
-                likes: 15,
-                comments: [],
-                reports: [],
-                isBanned: false
-            }
-        ];
-        localStorage.setItem('posts', JSON.stringify(defaultPosts));
-    }
-
-    // 消息数据
-    if (!localStorage.getItem('messages')) {
-        const defaultMessages = {
-            system: [
-                {
-                    id: 1,
-                    subject: '欢迎加入讨论区',
-                    content: '感谢你注册并使用Submerge__l讨论区，祝你使用愉快！',
-                    time: new Date().toLocaleString(),
-                    isRead: false
-                }
-            ],
-            user: [],
-            report: []
-        };
-        localStorage.setItem('messages', JSON.stringify(defaultMessages));
-    }
-
-    // 当前登录用户
-    if (!localStorage.getItem('currentUser')) {
-        localStorage.setItem('currentUser', JSON.stringify(null));
-    }
-}
-
-// 工具函数
+// ========== 工具函数 ==========
 const utils = {
-    // 获取当前登录用户
+    // 获取存储的 token
+    getToken: () => localStorage.getItem('token'),
+    
+    // 获取当前登录用户信息
     getCurrentUser: () => JSON.parse(localStorage.getItem('currentUser')),
-    // 设置当前登录用户
+    
+    // 设置当前用户
     setCurrentUser: (user) => localStorage.setItem('currentUser', JSON.stringify(user)),
-    // 获取所有用户
-    getUsers: () => JSON.parse(localStorage.getItem('users')),
-    // 保存用户
-    saveUsers: (users) => localStorage.setItem('users', JSON.stringify(users)),
-    // 获取所有帖子
-    getPosts: () => JSON.parse(localStorage.getItem('posts')),
-    // 保存帖子
-    savePosts: (posts) => localStorage.setItem('posts', JSON.stringify(posts)),
-    // 获取消息
-    getMessages: () => JSON.parse(localStorage.getItem('messages')),
-    // 保存消息
-    saveMessages: (messages) => localStorage.setItem('messages', JSON.stringify(messages)),
-    // 生成唯一ID
-    generateId: (type) => {
-        let items = [];
-        if (type === 'post') items = utils.getPosts();
-        else if (type === 'comment') {
-            // 查找所有评论的最大ID
-            const posts = utils.getPosts();
-            let maxId = 0;
-            posts.forEach(post => {
-                post.comments.forEach(comment => {
-                    if (comment.id > maxId) maxId = comment.id;
-                });
-            });
-            return maxId + 1;
-        }
-        else if (type === 'message') {
-            const messages = utils.getMessages();
-            let maxId = 0;
-            Object.values(messages).forEach(typeMsgs => {
-                typeMsgs.forEach(msg => {
-                    if (msg.id > maxId) maxId = msg.id;
-                });
-            });
-            return maxId + 1;
-        }
-        return items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+    
+    // 保存 token
+    setToken: (token) => localStorage.setItem('token', token),
+    
+    // 清除登录状态
+    clearAuth: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
     },
-    // 格式化时间
-    formatTime: (date) => new Date(date).toLocaleString(),
-    // 检查是否为管理员
+    
+    // 检查是否已登录
+    isLoggedIn: () => !!utils.getToken(),
+    
+    // 检查是否为管理员（含所有者）
     isAdmin: () => {
         const user = utils.getCurrentUser();
-        return user && user.isAdmin;
+        return user && (user.role === 'admin' || user.role === 'owner');
     },
-    // 更新统计数据
-    updateStats: () => {
-        const posts = utils.getPosts();
-        const users = utils.getUsers();
-        const today = new Date().toLocaleDateString();
-        
-        // 总帖子数
-        document.getElementById('total-posts').textContent = posts.length;
-        // 今日发帖数
-        const todayPosts = posts.filter(post => new Date(post.time).toLocaleDateString() === today).length;
-        document.getElementById('today-posts').textContent = todayPosts;
-        // 总用户数
-        document.getElementById('total-users').textContent = users.length;
-    },
-    // 更新未读消息数
-    updateUnreadCount: () => {
+    
+    // 检查是否为所有者
+    isOwner: () => {
         const user = utils.getCurrentUser();
-        if (!user) return;
-        
-        const messages = utils.getMessages();
-        let unreadCount = 0;
-        
-        // 系统消息未读数
-        unreadCount += messages.system.filter(msg => !msg.isRead).length;
-        // 用户消息未读数
-        unreadCount += messages.user.filter(msg => !msg.isRead).length;
-        // 管理员举报消息未读数
-        if (user.isAdmin) {
-            unreadCount += messages.report.filter(msg => !msg.isRead).length;
+        return user && user.role === 'owner';
+    },
+    
+    // 格式化时间
+    formatTime: (date) => new Date(date).toLocaleString(),
+    
+    // 发起带认证的 fetch 请求
+    fetchWithAuth: async (url, options = {}) => {
+        const token = utils.getToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
-        
-        const badge = document.getElementById('msg-badge');
-        if (unreadCount > 0) {
-            badge.textContent = unreadCount;
-            badge.style.display = 'inline-block';
-        } else {
-            badge.style.display = 'none';
-        }
+        const response = await fetch(API_BASE + url, {
+            ...options,
+            headers
+        });
+        return response;
     }
 };
 
-// 打开模态框
+// ========== 模态框控制 ==========
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
-    // 阻止页面滚动
     document.body.style.overflow = 'hidden';
 }
 
-// 关闭模态框
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'none';
-    // 恢复页面滚动
     document.body.style.overflow = 'auto';
 }
 
-// 初始化页面
-function initPage() {
-    initStorage();
-    renderPosts();
-    utils.updateStats();
-    
-    // 检查登录状态
-    checkLoginStatus();
-    
-    // 绑定事件
-    bindEvents();
-    
-    // 初始化Markdown预览
-    initMarkdownPreview();
-}
-
-// 检查登录状态
+// ========== 检查登录状态并更新UI ==========
 function checkLoginStatus() {
     const currentUser = utils.getCurrentUser();
     const authButtons = document.getElementById('auth-buttons');
@@ -323,27 +138,146 @@ function checkLoginStatus() {
     if (currentUser) {
         authButtons.style.display = 'none';
         userProfile.style.display = 'flex';
-        document.getElementById('user-avatar').textContent = currentUser.avatar || currentUser.username.charAt(0);
+        document.getElementById('user-avatar').textContent = currentUser.avatar || currentUser.username.charAt(0).toUpperCase();
         document.getElementById('user-name').textContent = currentUser.username;
         
-        // 更新未读消息数
-        utils.updateUnreadCount();
+        // 更新未读消息数（暂不实现，后续分支添加）
+        // utils.updateUnreadCount();
     } else {
         authButtons.style.display = 'block';
         userProfile.style.display = 'none';
     }
 }
 
-// 渲染帖子列表
+// ========== 登录功能 ==========
+async function login() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const errorEl = document.getElementById('login-error');
+    
+    errorEl.style.display = 'none';
+    
+    if (!username || !password) {
+        errorEl.textContent = '用户名和密码不能为空！';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.message || '登录失败');
+        }
+        
+        // 保存 token 和用户信息
+        utils.setToken(data.token);
+        utils.setCurrentUser(data.user);
+        
+        closeModal('login-modal');
+        checkLoginStatus();
+        showToast(`欢迎回来，${username}！`, 'success');
+        
+        // 清空输入框
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+    } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+    }
+}
+
+// ========== 注册功能 ==========
+async function register() {
+    const username = document.getElementById('register-username').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value.trim();
+    const errorEl = document.getElementById('register-error');
+    
+    errorEl.style.display = 'none';
+    
+    // 验证
+    if (!username || !email || !password) {
+        errorEl.textContent = '所有字段都不能为空！';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (password.length < 6) {
+        errorEl.textContent = '密码长度不能少于6位！';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        errorEl.textContent = '邮箱格式不正确！';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.message || '注册失败');
+        }
+        
+        // 自动登录（注册成功后直接登录）
+        utils.setToken(data.token);
+        utils.setCurrentUser(data.user);
+        
+        closeModal('register-modal');
+        checkLoginStatus();
+        showToast(`注册成功！欢迎 ${username}`, 'success');
+        
+        // 清空输入框
+        document.getElementById('register-username').value = '';
+        document.getElementById('register-email').value = '';
+        document.getElementById('register-password').value = '';
+    } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+    }
+}
+
+// ========== 退出登录 ==========
+function logout() {
+    showConfirm('确定要退出登录吗？', false, (confirmed) => {
+        if (confirmed) {
+            utils.clearAuth();
+            checkLoginStatus();
+            showToast('已退出登录！', 'info');
+        }
+    });
+}
+
+// ========== 渲染帖子列表（暂用模拟数据，后续分支对接真实API）==========
+// 注意：在 step-2-user 中，帖子功能尚未对接后端，所以暂时使用 localStorage 模拟数据，
+// 以免影响其他功能的演示。但登录/注册已经对接后端。
+// 这里保留原有的 renderPosts 函数，但将其数据源改为 localStorage（兼容之前的数据结构）
 function renderPosts() {
-    const posts = utils.getPosts();
+    // 从 localStorage 获取帖子数据（兼容之前版本）
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
     const postList = document.getElementById('post-list');
     const currentUser = utils.getCurrentUser();
     
     postList.innerHTML = '';
     
     // 过滤掉被封禁的帖子（管理员可以看到）
-    const visiblePosts = currentUser && currentUser.isAdmin 
+    const visiblePosts = currentUser && utils.isAdmin() 
         ? posts 
         : posts.filter(post => !post.isBanned);
     
@@ -377,13 +311,12 @@ function renderPosts() {
         
         // 帖子点击事件
         postItem.addEventListener('click', (e) => {
-            // 排除点赞按钮点击
             if (!e.target.closest('.like-btn')) {
                 openPostDetail(post.id);
             }
         });
         
-        // 帖子点赞事件
+        // 帖子点赞事件（暂用 localStorage 模拟）
         const likeBtn = postItem.querySelector('.like-btn');
         likeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -392,7 +325,7 @@ function renderPosts() {
     });
 }
 
-// 切换帖子点赞状态
+// ========== 切换帖子点赞（模拟）==========
 function togglePostLike(postId) {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -401,34 +334,35 @@ function togglePostLike(postId) {
         return;
     }
     
-    const posts = utils.getPosts();
+    // 从 localStorage 获取数据
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    
     const postIndex = posts.findIndex(post => post.id === postId);
     if (postIndex === -1) return;
     
-    const users = utils.getUsers();
     const userIndex = users.findIndex(user => user.username === currentUser.username);
+    if (userIndex === -1) return;
     
     // 检查是否已点赞
     const isLiked = currentUser.likedPosts && currentUser.likedPosts.includes(postId);
     
     if (isLiked) {
-        // 取消点赞
         posts[postIndex].likes--;
         users[userIndex].likedPosts = users[userIndex].likedPosts.filter(id => id !== postId);
         showToast('已取消点赞', 'info');
     } else {
-        // 点赞
         posts[postIndex].likes++;
         if (!users[userIndex].likedPosts) users[userIndex].likedPosts = [];
         users[userIndex].likedPosts.push(postId);
         showToast('点赞成功', 'success');
     }
     
-    // 保存数据
-    utils.savePosts(posts);
-    utils.saveUsers(users);
+    // 保存回 localStorage
+    localStorage.setItem('posts', JSON.stringify(posts));
+    localStorage.setItem('users', JSON.stringify(users));
     
-    // 更新当前用户
+    // 更新当前用户信息
     currentUser.likedPosts = users[userIndex].likedPosts;
     utils.setCurrentUser(currentUser);
     
@@ -436,9 +370,9 @@ function togglePostLike(postId) {
     renderPosts();
 }
 
-// 打开帖子详情
+// ========== 打开帖子详情（暂用模拟）==========
 function openPostDetail(postId) {
-    const posts = utils.getPosts();
+    const posts = JSON.parse(localStorage.getItem('posts')) || [];
     const post = posts.find(post => post.id === postId);
     if (!post) return;
     
@@ -446,14 +380,12 @@ function openPostDetail(postId) {
     const isLiked = currentUser && currentUser.likedPosts && currentUser.likedPosts.includes(postId);
     const isCollected = currentUser && currentUser.collections && currentUser.collections.includes(postId);
     
-    // 填充内容
     document.getElementById('detail-title').textContent = post.title;
     document.getElementById('detail-author').textContent = `发布者: ${post.author}`;
     document.getElementById('detail-time').textContent = `发布时间: ${post.time}`;
     document.getElementById('detail-content').innerHTML = marked.parse(post.content);
     document.getElementById('like-count').textContent = post.likes;
     
-    // 更新点赞/收藏状态
     const likeBtn = document.getElementById('like-post');
     const collectBtn = document.getElementById('collect-post');
     
@@ -463,23 +395,17 @@ function openPostDetail(postId) {
     collectBtn.className = `post-detail-action-btn ${isCollected ? 'collected' : ''}`;
     collectBtn.innerHTML = `<i class="bi bi-star${isCollected ? '-fill' : ''}"></i> ${isCollected ? '已收藏' : '收藏'}`;
     
-    // 显示管理员操作
     const adminActions = document.getElementById('admin-actions');
-    adminActions.style.display = (currentUser && currentUser.isAdmin) ? 'inline-flex' : 'none';
+    adminActions.style.display = (currentUser && utils.isAdmin()) ? 'inline-flex' : 'none';
     
-    // 渲染评论
     renderComments(postId);
-    
-    // 打开模态框
     openModal('post-detail-modal');
-    
-    // 绑定帖子详情内的事件
     bindPostDetailEvents(postId);
 }
 
-// 渲染评论
+// ========== 渲染评论（模拟）==========
 function renderComments(postId) {
-    const posts = utils.getPosts();
+    const posts = JSON.parse(localStorage.getItem('posts')) || [];
     const post = posts.find(post => post.id === postId);
     if (!post || !post.comments) return;
     
@@ -512,13 +438,11 @@ function renderComments(postId) {
         
         commentList.appendChild(commentItem);
         
-        // 评论点赞事件
         const likeBtn = commentItem.querySelector('.like-comment');
         likeBtn.addEventListener('click', () => {
             toggleCommentLike(postId, comment.id);
         });
         
-        // 评论举报事件
         const reportBtn = commentItem.querySelector('.report-comment');
         reportBtn.addEventListener('click', () => {
             openReportModal('comment', postId, comment.id);
@@ -526,7 +450,7 @@ function renderComments(postId) {
     });
 }
 
-// 切换评论点赞状态
+// ========== 切换评论点赞（模拟）==========
 function toggleCommentLike(postId, commentId) {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -535,59 +459,52 @@ function toggleCommentLike(postId, commentId) {
         return;
     }
     
-    const posts = utils.getPosts();
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    
     const postIndex = posts.findIndex(post => post.id === postId);
     if (postIndex === -1) return;
     
     const commentIndex = posts[postIndex].comments.findIndex(comment => comment.id === commentId);
     if (commentIndex === -1) return;
     
-    const users = utils.getUsers();
     const userIndex = users.findIndex(user => user.username === currentUser.username);
+    if (userIndex === -1) return;
     
-    // 检查是否已点赞
     const isLiked = currentUser.likedComments && currentUser.likedComments.includes(commentId);
     
     if (isLiked) {
-        // 取消点赞
         posts[postIndex].comments[commentIndex].likes = (posts[postIndex].comments[commentIndex].likes || 1) - 1;
         users[userIndex].likedComments = users[userIndex].likedComments.filter(id => id !== commentId);
         showToast('已取消评论点赞', 'info');
     } else {
-        // 点赞
         posts[postIndex].comments[commentIndex].likes = (posts[postIndex].comments[commentIndex].likes || 0) + 1;
         if (!users[userIndex].likedComments) users[userIndex].likedComments = [];
         users[userIndex].likedComments.push(commentId);
         showToast('评论点赞成功', 'success');
     }
     
-    // 保存数据
-    utils.savePosts(posts);
-    utils.saveUsers(users);
+    localStorage.setItem('posts', JSON.stringify(posts));
+    localStorage.setItem('users', JSON.stringify(users));
     
-    // 更新当前用户
     currentUser.likedComments = users[userIndex].likedComments;
     utils.setCurrentUser(currentUser);
     
-    // 重新渲染评论
     renderComments(postId);
 }
 
-// 绑定帖子详情事件
+// ========== 绑定帖子详情事件 ==========
 function bindPostDetailEvents(postId) {
     const currentUser = utils.getCurrentUser();
     
-    // 帖子点赞
     document.getElementById('like-post').addEventListener('click', () => {
         togglePostLike(postId);
-        // 更新点赞数显示
-        const post = utils.getPosts().find(p => p.id === postId);
+        const post = JSON.parse(localStorage.getItem('posts')).find(p => p.id === postId);
         document.getElementById('like-count').textContent = post.likes;
         const isLiked = currentUser && currentUser.likedPosts && currentUser.likedPosts.includes(postId);
         document.getElementById('like-post').innerHTML = `<i class="bi bi-heart${isLiked ? '-fill' : ''}"></i> 点赞 (<span id="like-count">${post.likes}</span>)`;
     });
     
-    // 帖子收藏
     document.getElementById('collect-post').addEventListener('click', () => {
         if (!currentUser) {
             showToast('请先登录！', 'warning');
@@ -595,58 +512,49 @@ function bindPostDetailEvents(postId) {
             return;
         }
         
-        const users = utils.getUsers();
+        let users = JSON.parse(localStorage.getItem('users')) || [];
         const userIndex = users.findIndex(user => user.username === currentUser.username);
+        if (userIndex === -1) return;
         
-        // 检查是否已收藏
         const isCollected = currentUser.collections && currentUser.collections.includes(postId);
         
         if (isCollected) {
-            // 取消收藏
             users[userIndex].collections = users[userIndex].collections.filter(id => id !== postId);
             showToast('已取消收藏！', 'info');
         } else {
-            // 收藏
             if (!users[userIndex].collections) users[userIndex].collections = [];
             users[userIndex].collections.push(postId);
             showToast('收藏成功！', 'success');
         }
         
-        // 保存数据
-        utils.saveUsers(users);
+        localStorage.setItem('users', JSON.stringify(users));
         
-        // 更新当前用户
         currentUser.collections = users[userIndex].collections;
         utils.setCurrentUser(currentUser);
         
-        // 更新收藏按钮状态
         const collectBtn = document.getElementById('collect-post');
         const newIsCollected = currentUser.collections && currentUser.collections.includes(postId);
         collectBtn.className = `post-detail-action-btn ${newIsCollected ? 'collected' : ''}`;
         collectBtn.innerHTML = `<i class="bi bi-star${newIsCollected ? '-fill' : ''}"></i> ${newIsCollected ? '已收藏' : '收藏'}`;
     });
     
-    // 帖子举报
     document.getElementById('report-post').addEventListener('click', () => {
         openReportModal('post', postId);
     });
     
-    // 发布评论
     document.getElementById('submit-comment').addEventListener('click', () => {
         submitComment(postId);
     });
     
-    // 管理员操作 - 封禁帖子
     document.getElementById('ban-post').addEventListener('click', () => {
         showConfirm('确定要封禁这个帖子吗？', false, (confirmed) => {
             if (confirmed) {
-                const posts = utils.getPosts();
+                let posts = JSON.parse(localStorage.getItem('posts')) || [];
                 const postIndex = posts.findIndex(post => post.id === postId);
                 posts[postIndex].isBanned = !posts[postIndex].isBanned;
-                utils.savePosts(posts);
+                localStorage.setItem('posts', JSON.stringify(posts));
                 
-                // 添加系统消息
-                addSystemMessage(post.author, `你的帖子《${posts[postIndex].title}》已被${posts[postIndex].isBanned ? '封禁' : '解封'}`);
+                addSystemMessage(posts[postIndex].author, `你的帖子《${posts[postIndex].title}》已被${posts[postIndex].isBanned ? '封禁' : '解封'}`);
                 
                 showToast(`帖子已${posts[postIndex].isBanned ? '封禁' : '解封'}！`, 'success');
                 closeModal('post-detail-modal');
@@ -655,29 +563,26 @@ function bindPostDetailEvents(postId) {
         });
     });
     
-    // 管理员操作 - 封禁用户
     document.getElementById('ban-user').addEventListener('click', () => {
-        const post = utils.getPosts().find(p => p.id === postId);
+        const post = JSON.parse(localStorage.getItem('posts')).find(p => p.id === postId);
         showConfirm(`确定要封禁用户 ${post.author} 吗？`, false, (confirmed) => {
             if (confirmed) {
-                // 这里简化处理，实际项目需要更完善的封禁逻辑
                 addSystemMessage(post.author, '你的账号已被管理员封禁，请联系客服解决');
                 showToast(`用户 ${post.author} 已被封禁！`, 'success');
             }
         });
     });
     
-    // 管理员操作 - 修改分类
     document.getElementById('change-category').addEventListener('click', () => {
         showConfirm('请输入新的分类标签（用逗号分隔）：', true, (confirmed, inputValue) => {
             if (confirmed && inputValue) {
-                const posts = utils.getPosts();
+                let posts = JSON.parse(localStorage.getItem('posts')) || [];
                 const postIndex = posts.findIndex(post => post.id === postId);
                 posts[postIndex].tags = inputValue.split(',').map(tag => tag.trim());
-                utils.savePosts(posts);
+                localStorage.setItem('posts', JSON.stringify(posts));
                 
                 showToast('分类修改成功！', 'success');
-                openPostDetail(postId); // 重新加载帖子详情
+                openPostDetail(postId);
             } else if (confirmed && !inputValue) {
                 showToast('分类标签不能为空！', 'error');
             }
@@ -685,7 +590,7 @@ function bindPostDetailEvents(postId) {
     });
 }
 
-// 提交评论
+// ========== 提交评论（模拟）==========
 function submitComment(postId) {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -700,12 +605,23 @@ function submitComment(postId) {
         return;
     }
     
-    const posts = utils.getPosts();
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
     const postIndex = posts.findIndex(post => post.id === postId);
+    if (postIndex === -1) return;
     
-    // 创建新评论
+    // 生成新评论ID
+    let maxId = 0;
+    posts.forEach(post => {
+        if (post.comments) {
+            post.comments.forEach(comment => {
+                if (comment.id > maxId) maxId = comment.id;
+            });
+        }
+    });
+    const newId = maxId + 1;
+    
     const newComment = {
-        id: utils.generateId('comment'),
+        id: newId,
         author: currentUser.username,
         content: commentContent,
         time: new Date().toLocaleString(),
@@ -713,26 +629,19 @@ function submitComment(postId) {
         isBanned: false
     };
     
-    // 添加评论
     if (!posts[postIndex].comments) posts[postIndex].comments = [];
     posts[postIndex].comments.push(newComment);
     
-    // 保存数据
-    utils.savePosts(posts);
+    localStorage.setItem('posts', JSON.stringify(posts));
     
-    // 清空输入框
     document.getElementById('comment-input').value = '';
-    
-    // 重新渲染评论
     renderComments(postId);
     
-    // 添加系统消息通知作者
     addSystemMessage(posts[postIndex].author, `你的帖子《${posts[postIndex].title}》有新的评论`);
-    
     showToast('评论发布成功！', 'success');
 }
 
-// 打开举报模态框
+// ========== 打开举报模态框 ==========
 function openReportModal(type, targetId, commentId) {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -741,22 +650,19 @@ function openReportModal(type, targetId, commentId) {
         return;
     }
     
-    // 保存举报类型和ID
     document.getElementById('report-modal').dataset.type = type;
     document.getElementById('report-modal').dataset.targetId = targetId;
     if (commentId) {
         document.getElementById('report-modal').dataset.commentId = commentId;
     }
     
-    // 清空举报原因
     document.getElementById('report-reason').value = '';
     document.getElementById('report-error').style.display = 'none';
     
-    // 打开模态框
     openModal('report-modal');
 }
 
-// 提交举报
+// ========== 提交举报 ==========
 function submitReport() {
     const reason = document.getElementById('report-reason').value.trim();
     if (!reason) {
@@ -771,32 +677,30 @@ function submitReport() {
     const commentId = modal.dataset.commentId ? parseInt(modal.dataset.commentId) : null;
     
     const currentUser = utils.getCurrentUser();
-    const posts = utils.getPosts();
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
     
-    // 找到目标帖子/评论
     let targetTitle = '';
     if (type === 'post') {
         const post = posts.find(p => p.id === targetId);
         targetTitle = post.title;
-        // 保存举报信息到帖子
         if (!post.reports) post.reports = [];
         post.reports.push({
-            id: utils.generateId('message'),
+            id: Date.now(),
             reporter: currentUser.username,
             reason: reason,
             time: new Date().toLocaleString(),
             isProcessed: false
         });
-        utils.savePosts(posts);
+        localStorage.setItem('posts', JSON.stringify(posts));
     } else if (type === 'comment') {
         const post = posts.find(p => p.id === targetId);
         const comment = post.comments.find(c => c.id === commentId);
         targetTitle = `评论(${comment.author}): ${comment.content.substring(0, 20)}...`;
     }
     
-    // 添加举报消息给管理员
+    // 添加举报消息（模拟）
     addReportMessage({
-        id: utils.generateId('message'),
+        id: Date.now(),
         subject: `新的举报 - ${type === 'post' ? '帖子' : '评论'}`,
         content: `举报人：${currentUser.username}\n举报对象：${targetTitle}\n举报原因：${reason}`,
         time: new Date().toLocaleString(),
@@ -806,21 +710,16 @@ function submitReport() {
         commentId: commentId
     });
     
-    // 关闭模态框
     closeModal('report-modal');
-    
-    // 提示成功
     showToast('举报提交成功！管理员会尽快处理。', 'success');
-    
-    // 添加系统消息
     addSystemMessage(currentUser.username, '你的举报已提交，管理员会尽快处理，感谢你的反馈！');
 }
 
-// 添加系统消息
+// ========== 添加系统消息（模拟）==========
 function addSystemMessage(username, content) {
-    const messages = utils.getMessages();
+    let messages = JSON.parse(localStorage.getItem('messages')) || { system: [], user: [], report: [] };
     const newMsg = {
-        id: utils.generateId('message'),
+        id: Date.now(),
         subject: '系统通知',
         content: content,
         time: new Date().toLocaleString(),
@@ -828,26 +727,23 @@ function addSystemMessage(username, content) {
     };
     
     messages.system.push(newMsg);
-    utils.saveMessages(messages);
+    localStorage.setItem('messages', JSON.stringify(messages));
     
-    // 更新未读消息数
+    // 更新未读消息数（简化处理）
     if (utils.getCurrentUser() && utils.getCurrentUser().username === username) {
-        utils.updateUnreadCount();
+        // utils.updateUnreadCount(); // 暂不实现
     }
 }
 
-// 添加举报消息
+// ========== 添加举报消息（模拟）==========
 function addReportMessage(msg) {
-    const messages = utils.getMessages();
+    let messages = JSON.parse(localStorage.getItem('messages')) || { system: [], user: [], report: [] };
     if (!messages.report) messages.report = [];
     messages.report.push(msg);
-    utils.saveMessages(messages);
-    
-    // 更新未读消息数
-    utils.updateUnreadCount();
+    localStorage.setItem('messages', JSON.stringify(messages));
 }
 
-// 打开消息中心
+// ========== 打开消息中心 ==========
 function openMessages() {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -856,40 +752,31 @@ function openMessages() {
         return;
     }
     
-    // 显示管理员举报标签
     const reportTab = document.getElementById('report-tab');
-    reportTab.style.display = currentUser.isAdmin ? 'block' : 'none';
+    reportTab.style.display = currentUser.role === 'admin' || currentUser.role === 'owner' ? 'block' : 'none';
     
-    // 渲染消息
     renderMessages('system');
-    
-    // 打开模态框
     openModal('messages-modal');
 }
 
-// 渲染消息
+// ========== 渲染消息 ==========
 function renderMessages(tabType) {
-    const messages = utils.getMessages();
+    const messages = JSON.parse(localStorage.getItem('messages')) || { system: [], user: [], report: [] };
     const msgContent = document.getElementById('msg-content');
     const currentUser = utils.getCurrentUser();
     
-    // 切换标签样式
     document.querySelectorAll('.msg-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.tab === tabType);
     });
     
-    // 获取对应类型的消息
     let msgs = messages[tabType] || [];
     
-    // 管理员可以看到所有举报消息，普通用户看不到
-    if (tabType === 'report' && !currentUser.isAdmin) {
+    if (tabType === 'report' && !utils.isAdmin()) {
         msgs = [];
     }
     
-    // 按时间倒序排列
     msgs = msgs.sort((a, b) => new Date(b.time) - new Date(a.time));
     
-    // 渲染消息列表
     msgContent.innerHTML = '';
     
     if (msgs.length === 0) {
@@ -907,7 +794,7 @@ function renderMessages(tabType) {
                 <div class="msg-subject">${msg.subject}</div>
                 <div class="msg-text">${msg.content}</div>
                 <div class="msg-time">${msg.time}</div>
-                ${currentUser.isAdmin && tabType === 'report' ? `
+                ${utils.isAdmin() && tabType === 'report' ? `
                     <div class="admin-actions">
                         <button class="btn btn-primary btn-sm process-report" data-id="${msg.targetId}" data-comment-id="${msg.commentId || ''}">处理</button>
                         <button class="btn btn-secondary btn-sm mark-read" data-id="${msg.id}">标为已读</button>
@@ -918,18 +805,16 @@ function renderMessages(tabType) {
         
         msgContent.appendChild(msgItem);
         
-        // 标记为已读
         msgItem.addEventListener('click', () => {
             if (!msg.isRead) {
                 msg.isRead = true;
-                utils.saveMessages(messages);
+                localStorage.setItem('messages', JSON.stringify(messages));
                 msgItem.classList.remove('unread');
-                utils.updateUnreadCount();
+                // utils.updateUnreadCount();
             }
         });
         
-        // 管理员处理举报
-        if (currentUser.isAdmin && tabType === 'report') {
+        if (utils.isAdmin() && tabType === 'report') {
             const processBtn = msgItem.querySelector('.process-report');
             if (processBtn) {
                 processBtn.addEventListener('click', (e) => {
@@ -937,18 +822,14 @@ function renderMessages(tabType) {
                     const targetId = parseInt(processBtn.dataset.id);
                     const commentId = processBtn.dataset.commentId ? parseInt(processBtn.dataset.commentId) : null;
                     
-                    // 标记举报为已处理
                     msg.isProcessed = true;
-                    utils.saveMessages(messages);
+                    localStorage.setItem('messages', JSON.stringify(messages));
                     
-                    // 询问处理方式
                     showConfirm('请输入处理结果（例如：已封禁/已警告/不予处理）：', true, (confirmed, action) => {
                         if (confirmed && action) {
-                            // 添加系统消息通知举报人
                             addSystemMessage(msg.reporter || '未知用户', `你举报的${msg.targetType === 'post' ? '帖子' : '评论'}已处理，处理结果：${action}`);
                             showToast('举报已处理！', 'success');
                             renderMessages('report');
-                            utils.updateUnreadCount();
                         } else if (confirmed && !action) {
                             showToast('处理结果不能为空！', 'error');
                         }
@@ -956,15 +837,13 @@ function renderMessages(tabType) {
                 });
             }
             
-            // 标为已读
             const markReadBtn = msgItem.querySelector('.mark-read');
             if (markReadBtn) {
                 markReadBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     msg.isRead = true;
-                    utils.saveMessages(messages);
+                    localStorage.setItem('messages', JSON.stringify(messages));
                     msgItem.classList.remove('unread');
-                    utils.updateUnreadCount();
                     showToast('已标记为已读！', 'success');
                 });
             }
@@ -972,17 +851,17 @@ function renderMessages(tabType) {
     });
 }
 
-// 初始化Markdown编辑器
+// ========== 初始化 Markdown 预览 ==========
 function initMarkdownPreview() {
     const editorTextarea = document.getElementById('post-content');
     const previewArea = document.getElementById('editor-preview');
     
-    // 实时预览
+    if (!editorTextarea || !previewArea) return;
+    
     editorTextarea.addEventListener('input', () => {
         previewArea.innerHTML = marked.parse(editorTextarea.value);
     });
     
-    // 编辑器工具栏按钮事件
     document.querySelectorAll('.editor-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const action = btn.dataset.action;
@@ -991,7 +870,6 @@ function initMarkdownPreview() {
             const end = textarea.selectionEnd;
             const selectedText = textarea.value.substring(start, end);
             
-            // 根据不同的Markdown语法插入
             switch(action) {
                 case 'bold':
                     textarea.value = textarea.value.substring(0, start) + `**${selectedText || '粗体文本'}**` + textarea.value.substring(end);
@@ -1022,15 +900,13 @@ function initMarkdownPreview() {
                     break;
             }
             
-            // 更新预览
             previewArea.innerHTML = marked.parse(textarea.value);
-            // 聚焦回文本框
             textarea.focus();
         });
     });
 }
 
-// 发布新帖子
+// ========== 发布新帖子（模拟）==========
 function publishPost() {
     const currentUser = utils.getCurrentUser();
     if (!currentUser) {
@@ -1046,7 +922,6 @@ function publishPost() {
     const errorEl = document.getElementById('editor-error');
     errorEl.style.display = 'none';
     
-    // 验证
     if (!title) {
         errorEl.textContent = '帖子标题不能为空！';
         errorEl.style.display = 'block';
@@ -1059,9 +934,12 @@ function publishPost() {
         return;
     }
     
-    // 创建新帖子
+    let posts = JSON.parse(localStorage.getItem('posts')) || [];
+    let maxId = 0;
+    posts.forEach(post => { if (post.id > maxId) maxId = post.id; });
+    
     const newPost = {
-        id: utils.generateId('post'),
+        id: maxId + 1,
         title: title,
         content: content,
         author: currentUser.username,
@@ -1073,158 +951,104 @@ function publishPost() {
         isBanned: false
     };
     
-    // 保存帖子
-    const posts = utils.getPosts();
-    posts.unshift(newPost); // 最新的帖子放在最前面
-    utils.savePosts(posts);
+    posts.unshift(newPost);
+    localStorage.setItem('posts', JSON.stringify(posts));
     
-    // 清空编辑器
     document.getElementById('post-title').value = '';
     document.getElementById('post-content').value = '';
     document.getElementById('post-tags').value = '';
     document.getElementById('editor-preview').innerHTML = '';
     
-    // 关闭模态框
     closeModal('editor-modal');
-    
-    // 更新页面
     renderPosts();
-    utils.updateStats();
+    // updateStats(); // 暂不实现
     
-    // 添加系统消息
     addSystemMessage(currentUser.username, `你的帖子《${title}》发布成功！`);
-    
     showToast('帖子发布成功！', 'success');
 }
 
-// 登录功能
-function login() {
-    const username = document.getElementById('login-username').value.trim();
-    const password = document.getElementById('login-password').value.trim();
-    const errorEl = document.getElementById('login-error');
-    
-    errorEl.style.display = 'none';
-    
-    if (!username || !password) {
-        errorEl.textContent = '用户名和密码不能为空！';
-        errorEl.style.display = 'block';
-        return;
+// ========== 初始化页面数据 ==========
+function initData() {
+    // 初始化 localStorage 数据（兼容原有模拟数据）
+    if (!localStorage.getItem('users')) {
+        const adminUser = {
+            username: 'Submerge',
+            password: 'syhnqqsjx1019',
+            email: 'admin@example.com',
+            role: 'owner',
+            avatar: 'S',
+            collections: [],
+            likedPosts: [],
+            likedComments: []
+        };
+        localStorage.setItem('users', JSON.stringify([adminUser]));
     }
     
-    const users = utils.getUsers();
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (!user) {
-        errorEl.textContent = '用户名或密码错误！';
-        errorEl.style.display = 'block';
-        return;
+    if (!localStorage.getItem('posts')) {
+        const defaultPosts = [
+            {
+                id: 1,
+                title: '这个讨论区的橙色主题太好看了，和 boyacoding.cn 一模一样！',
+                content: `# 讨论区主题分享\n\n这个橙色主题真的太好看了，分享一下实现思路：\n\n1. 使用CSS变量定义主题色\n\`\`\`css\n:root {\n    --main-color: #ff7c24;\n    --main-hover: #ff6a00;\n}\n\`\`\`\n\n2. 按钮和高亮元素使用主题色\n3. 悬停效果增强交互体验\n\n希望对大家有帮助！`,
+                author: 'Submerge',
+                time: new Date().toLocaleString(),
+                tags: ['主题分享', '前端'],
+                likes: 12,
+                comments: [],
+                reports: [],
+                isBanned: false
+            },
+            {
+                id: 2,
+                title: '求推荐好用的前端开发工具',
+                content: `## 前端开发工具求助\n\n最近在做静态页面开发，想找一些高效的编辑器和插件，大家有什么好的推荐吗？\n\n### 我目前在用的：\n- VS Code\n- Chrome开发者工具\n- PostCSS\n\n希望能找到更多提升效率的工具！`,
+                author: '路人甲',
+                time: new Date(Date.now() - 600000).toLocaleString(),
+                tags: ['工具推荐', '开发'],
+                likes: 8,
+                comments: [],
+                reports: [],
+                isBanned: false
+            },
+            {
+                id: 3,
+                title: 'HTML+CSS零基础入门学习路线',
+                content: `# HTML+CSS零基础学习路线\n\n零基础想入门前端，从HTML和CSS开始，分享一下我的学习路线：\n\n### 阶段1：基础语法\n- HTML标签学习\n- CSS选择器和样式\n- 盒模型理解\n\n### 阶段2：实战练习\n- 简单页面布局\n- 响应式设计\n- 常见组件实现\n\n### 阶段3：进阶提升\n- Flex/Grid布局\n- CSS动画\n- 预处理器\n\n有没有更好的学习资源推荐？`,
+                author: '编程小白',
+                time: new Date(Date.now() - 1800000).toLocaleString(),
+                tags: ['学习路线', '零基础'],
+                likes: 15,
+                comments: [],
+                reports: [],
+                isBanned: false
+            }
+        ];
+        localStorage.setItem('posts', JSON.stringify(defaultPosts));
     }
     
-    // 登录成功
-    utils.setCurrentUser(user);
-    
-    // 关闭模态框
-    closeModal('login-modal');
-    
-    // 更新页面状态
-    checkLoginStatus();
-    
-    // 添加登录成功消息
-    addSystemMessage(username, '欢迎回来！你已成功登录讨论区');
-    
-    showToast(`欢迎回来，${username}！`, 'success');
+    if (!localStorage.getItem('messages')) {
+        const defaultMessages = {
+            system: [
+                {
+                    id: 1,
+                    subject: '欢迎加入讨论区',
+                    content: '感谢你注册并使用Submerge讨论区，祝你使用愉快！',
+                    time: new Date().toLocaleString(),
+                    isRead: false
+                }
+            ],
+            user: [],
+            report: []
+        };
+        localStorage.setItem('messages', JSON.stringify(defaultMessages));
+    }
 }
 
-// 注册功能
-function register() {
-    const username = document.getElementById('register-username').value.trim();
-    const email = document.getElementById('register-email').value.trim();
-    const password = document.getElementById('register-password').value.trim();
-    const errorEl = document.getElementById('register-error');
-    
-    errorEl.style.display = 'none';
-    
-    // 验证
-    if (!username || !email || !password) {
-        errorEl.textContent = '所有字段都不能为空！';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    if (password.length < 6) {
-        errorEl.textContent = '密码长度不能少于6位！';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        errorEl.textContent = '邮箱格式不正确！';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    const users = utils.getUsers();
-    if (users.some(u => u.username === username)) {
-        errorEl.textContent = '用户名已存在！';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    if (users.some(u => u.email === email)) {
-        errorEl.textContent = '邮箱已被注册！';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    // 创建新用户
-    const newUser = {
-        username: username,
-        password: password,
-        email: email,
-        isAdmin: false,
-        avatar: username.charAt(0),
-        collections: [],
-        likedPosts: [],
-        likedComments: []
-    };
-    
-    // 保存用户
-    users.push(newUser);
-    utils.saveUsers(users);
-    
-    // 清空表单
-    document.getElementById('register-username').value = '';
-    document.getElementById('register-email').value = '';
-    document.getElementById('register-password').value = '';
-    
-    // 关闭模态框
-    closeModal('register-modal');
-    
-    // 添加注册成功消息
-    addSystemMessage(username, '恭喜你注册成功！欢迎加入讨论区');
-    
-    showToast('注册成功！请登录', 'success');
-}
-
-// 退出登录
-function logout() {
-    showConfirm('确定要退出登录吗？', false, (confirmed) => {
-        if (confirmed) {
-            utils.setCurrentUser(null);
-            checkLoginStatus();
-            showToast('已退出登录！', 'info');
-        }
-    });
-}
-
-// 绑定所有事件
+// ========== 绑定事件 ==========
 function bindEvents() {
-    // 登录/注册模态框事件
     document.getElementById('login-btn').addEventListener('click', () => openModal('login-modal'));
     document.getElementById('register-btn').addEventListener('click', () => openModal('register-modal'));
     
-    // 关闭模态框事件
     document.getElementById('login-close').addEventListener('click', () => closeModal('login-modal'));
     document.getElementById('login-cancel').addEventListener('click', () => closeModal('login-modal'));
     document.getElementById('register-close').addEventListener('click', () => closeModal('register-modal'));
@@ -1238,17 +1062,13 @@ function bindEvents() {
     document.getElementById('messages-close').addEventListener('click', () => closeModal('messages-modal'));
     document.getElementById('messages-cancel').addEventListener('click', () => closeModal('messages-modal'));
     
-    // 登录/注册提交
     document.getElementById('login-submit').addEventListener('click', login);
     document.getElementById('register-submit').addEventListener('click', register);
     
-    // 退出登录
     document.getElementById('logout-btn').addEventListener('click', logout);
     
-    // 创建帖子按钮
     document.getElementById('create-post-btn').addEventListener('click', () => {
-        const currentUser = utils.getCurrentUser();
-        if (currentUser) {
+        if (utils.isLoggedIn()) {
             openModal('editor-modal');
         } else {
             showToast('请先登录！', 'warning');
@@ -1256,23 +1076,16 @@ function bindEvents() {
         }
     });
     
-    // 发布帖子
     document.getElementById('editor-submit').addEventListener('click', publishPost);
-    
-    // 提交举报
     document.getElementById('report-submit').addEventListener('click', submitReport);
-    
-    // 消息中心
     document.getElementById('msg-icon').addEventListener('click', openMessages);
     
-    // 消息标签切换
     document.querySelectorAll('.msg-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             renderMessages(tab.dataset.tab);
         });
     });
     
-    // 点击模态框外部关闭
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1282,5 +1095,14 @@ function bindEvents() {
     });
 }
 
-// 页面加载完成后初始化
+// ========== 页面初始化 ==========
+function initPage() {
+    initData();
+    renderPosts();
+    checkLoginStatus();
+    bindEvents();
+    initMarkdownPreview();
+}
+
+// 启动
 window.addEventListener('DOMContentLoaded', initPage);
