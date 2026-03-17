@@ -20,6 +20,9 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ MongoDB connected successfully'))
     .catch(err => console.log('❌ MongoDB connection error:', err));
 
+// 路由
+app.use('/api/auth', require('./routes/auth'));
+
 // 基础路由
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Submerge API is running' });
