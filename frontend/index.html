@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submerge 讨论区</title>
+    <meta name="description" content="Submerge 专属讨论区，分享交流，共同成长">
+    <!-- 引入外部CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入Markdown解析库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <!-- ========== 自定义消息提示容器 ========== -->
+    <div class="custom-toast" id="customToast"></div>
+    <!-- ========== 自定义确认框容器 ========== -->
+    <div class="custom-confirm" id="customConfirm">
+        <div class="confirm-content">
+            <div class="confirm-title" id="confirmTitle"></div>
+            <input type="text" class="confirm-input" id="confirmInput" style="display: none;">
+            <div class="confirm-btns">
+                <button class="btn btn-secondary" id="confirmCancel">取消</button>
+                <button class="btn btn-primary" id="confirmOk">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头部导航 -->
+    <header>
+        <div class="container header-main">
+            <div class="logo">Submerge <span>讨论区</span></div>
+            <div class="nav">
+                <a href="#" class="active">首页</a>
+                <a href="#">精华</a>
+                <a href="#">分类</a>
+                <a href="#">关于</a>
+                <a href="#">聊天</a>
+            </div>
+            <div class="user-info">
+                <div id="auth-buttons">
+                    <a href="#" id="login-btn">登录</a>
+                    <a href="#" id="register-btn">注册</a>
+                </div>
+                <div id="user-profile" style="display: none;">
+                    <span class="avatar-small" id="user-avatar">U</span>
+                    <span id="user-name">用户名</span>
+                    <span class="msg-icon" id="msg-icon">
+                        <i class="bi bi-envelope"></i>
+                        <span class="msg-badge" id="msg-badge" style="display: none;">0</span>
+                    </span>
+                    <a href="#" id="logout-btn">退出</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <div class="container">
+        <main>
+            <div class="main-content">
+                <!-- 发帖区域（旧版，隐藏） -->
+                <div class="post-box">
+                    <textarea class="post-input" placeholder="分享你的想法、问题或见解..."></textarea>
+                    <button class="btn post-btn">发布讨论</button>
+                </div>
+                <!-- 帖子列表 -->
+                <div class="post-list" id="post-list">
+                    <!-- 帖子由JS动态生成 -->
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <div class="side-card">
+                    <div class="side-title">讨论区统计</div>
+                    <div class="stat-item">总帖子数 <span class="stat-num" id="total-posts">0</span></div>
+                    <div class="stat-item">今日发帖 <span class="stat-num" id="today-posts">0</span></div>
+                    <div class="stat-item">注册用户 <span class="stat-num" id="total-users">0</span></div>
+                    <div class="stat-item">在线人数 <span class="stat-num">68</span></div>
+                </div>
+                <div class="side-card">
+                    <div class="side-title">热门标签</div>
+                    <div class="tags-group">
+                        <span class="hot-tag">前端开发</span>
+                        <span class="hot-tag">HTML/CSS</span>
+                        <span class="hot-tag">编程学习</span>
+                        <span class="hot-tag">问题求助</span>
+                        <span class="hot-tag">资源分享</span>
+                        <span class="hot-tag">技术交流</span>
+                        <span class="hot-tag">Submerge</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 底部 -->
+    <footer>
+        <div class="container">
+            © 2026 Submerge 讨论区
+        </div>
+    </footer>
+
+    <!-- 创建帖子按钮 -->
+    <div class="create-post-btn" id="create-post-btn">
+        <i class="bi bi-plus"></i>
+    </div>
+
+    <!-- 登录模态框 -->
+    <div class="modal auth-modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">登录</div>
+                <span class="modal-close" id="login-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">账户</label>
+                    <input type="text" class="form-input" id="login-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="login-password" placeholder="请输入密码">
+                </div>
+                <div id="login-error" style="color: var(--danger-color); font-size: 12px; margin-top: 5px; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="login-cancel">取消</button>
+                <button class="btn btn-primary" id="login-submit">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册模态框 -->
+    <div class="modal auth-modal" id="register-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">注册</div>
+                <span class="modal-close" id="register-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <input type="text" class="form-input" id="register-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">邮箱</label>
+                    <input type="email" class="form-input" id="register-email" placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="register-password" placeholder="请输入密码">
+                </div>
+                <div id="register-error" style="color: var(--danger-color); font-size: 12px; margin-top: 5px; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="register-cancel">取消</button>
+                <button class="btn btn-primary" id="register-submit">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Markdown编辑器模态框 -->
+    <div class="modal" id="editor-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">发布新帖子</div>
+                <span class="modal-close" id="editor-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">标题</label>
+                    <input type="text" class="form-input" id="post-title" placeholder="请输入帖子标题">
+                </div>
+                <div class="editor-toolbar">
+                    <button class="editor-btn" data-action="bold"><i class="bi bi-type-bold"></i> 粗体</button>
+                    <button class="editor-btn" data-action="italic"><i class="bi bi-type-italic"></i> 斜体</button>
+                    <button class="editor-btn" data-action="strikethrough"><i class="bi bi-type-strikethrough"></i> 删除线</button>
+                    <button class="editor-btn" data-action="heading"><i class="bi bi-type-h1"></i> 标题</button>
+                    <button class="editor-btn" data-action="list"><i class="bi bi-list-ul"></i> 列表</button>
+                    <button class="editor-btn" data-action="code"><i class="bi bi-code"></i> 代码</button>
+                    <button class="editor-btn" data-action="quote"><i class="bi bi-quote"></i> 引用</button>
+                    <button class="editor-btn" data-action="link"><i class="bi bi-link"></i> 链接</button>
+                    <button class="editor-btn" data-action="image"><i class="bi bi-image"></i> 图片</button>
+                </div>
+                <div class="editor-container">
+                    <textarea class="editor-textarea" id="post-content" placeholder="请使用Markdown格式编写内容..."></textarea>
+                    <div class="form-group">
+                        <label class="form-label">预览</label>
+                        <div class="editor-preview" id="editor-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">标签（用逗号分隔）</label>
+                        <input type="text" class="tags-input" id="post-tags" placeholder="例如：前端开发,HTML/CSS,编程学习">
+                    </div>
+                </div>
+                <div id="editor-error" style="color: var(--danger-color); font-size: 12px; margin-top: 5px; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="editor-cancel">取消</button>
+                <button class="btn btn-primary" id="editor-submit">发布</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帖子详情模态框 -->
+    <div class="modal" id="post-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">帖子详情</div>
+                <span class="modal-close" id="post-detail-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="post-detail-header">
+                    <div class="post-detail-title" id="detail-title"></div>
+                    <div class="post-detail-meta">
+                        <span id="detail-author">发布者: 未知</span>
+                        <span id="detail-time">发布时间: 未知</span>
+                    </div>
+                    <div class="post-detail-actions">
+                        <span class="post-detail-action-btn" id="like-post">
+                            <i class="bi bi-heart"></i> 点赞 (<span id="like-count">0</span>)
+                        </span>
+                        <span class="post-detail-action-btn" id="collect-post">
+                            <i class="bi bi-star"></i> 收藏
+                        </span>
+                        <span class="post-detail-action-btn" id="report-post">
+                            <i class="bi bi-flag"></i> 举报
+                        </span>
+                        <span id="admin-actions" style="display: none;">
+                            <button class="btn btn-danger btn-sm" id="ban-post">封禁帖子</button>
+                            <button class="btn btn-secondary btn-sm" id="change-category">修改分类</button>
+                            <button class="btn btn-danger btn-sm" id="ban-user">封禁用户</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="post-detail-content" id="detail-content"></div>
+                
+                <!-- 评论区 -->
+                <div class="comments-section">
+                    <div class="comments-title">评论区</div>
+                    <div class="comment-input-box">
+                        <textarea class="comment-input" id="comment-input" placeholder="请输入评论..."></textarea>
+                        <button class="btn btn-primary" id="submit-comment">发布</button>
+                    </div>
+                    <div class="comment-list" id="comment-list">
+                        <!-- 评论由JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="post-detail-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 举报模态框 -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">举报帖子</div>
+                <span class="modal-close" id="report-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">举报原因</label>
+                    <textarea class="report-reason" id="report-reason" placeholder="请详细描述举报原因..."></textarea>
+                </div>
+                <div id="report-error" style="color: var(--danger-color); font-size: 12px; margin-top: 5px; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="report-cancel">取消</button>
+                <button class="btn btn-danger" id="report-submit">提交举报</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消息中心模态框 -->
+    <div class="modal messages-modal" id="messages-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">消息中心</div>
+                <span class="modal-close" id="messages-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="msg-tabs">
+                    <div class="msg-tab active" data-tab="system">系统消息</div>
+                    <div class="msg-tab" data-tab="user">用户消息</div>
+                    <div class="msg-tab" id="report-tab" style="display: none;" data-tab="report">举报消息</div>
+                </div>
+                <div class="msg-content" id="msg-content">
+                    <!-- 消息由JS动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="messages-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入外部JS -->
+    <script src="script.js"></script>
+</body>
+</html>
