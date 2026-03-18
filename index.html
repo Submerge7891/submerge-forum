@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submerge 讨论区</title>
     <meta name="description" content="Submerge 专属讨论区，分享交流，共同成长">
-    <!-- 引入外部CSS -->
-    <link rel="stylesheet" href="style.css">
+    <!-- 引入外部CSS - 注意路径加上 frontend/ -->
+    <link rel="stylesheet" href="frontend/style.css">
     <!-- 引入Markdown解析库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- 引入图标库 -->
@@ -35,8 +35,8 @@
                 <a href="#" class="active">首页</a>
                 <a href="#">精华</a>
                 <a href="#">分类</a>
-                <a href="#">关于</a>
                 <a href="#">聊天</a>
+                <a href="#">关于</a>
             </div>
             <div class="user-info">
                 <div id="auth-buttons">
@@ -300,7 +300,8 @@
         </div>
     </div>
 
-    <!-- 引入外部JS -->
-    <script src="script.js"></script>
+    <!-- 引入外部JS - 注意路径加上 frontend/，且先引入 config.js 再引入 script.js -->
+    <script src="frontend/config.js"></script>
+    <script src="frontend/script.js"></script>
 </body>
 </html>
