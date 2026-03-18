@@ -1,7 +1,8 @@
 // ========== 全局配置 ==========
 // API_BASE 从 config.js 引入
 // 注意：需要在 index.html 中先引入 config.js，再引入 script.js
-const API_BASE = typeof API_BASE !== 'undefined' ? API_BASE : '';
+
+//      const API_BASE = typeof API_BASE !== 'undefined' ? API_BASE : '';
 
 // ========== 自定义消息提示 ==========
 function showToast(message, type = 'info', duration = 3000) {
