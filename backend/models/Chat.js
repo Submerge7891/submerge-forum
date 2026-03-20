@@ -27,7 +27,6 @@ const chatSchema = new mongoose.Schema({
     }]
 });
 
-// 60天自动删除索引
 chatSchema.index({ lastMessageAt: 1 }, { expireAfterSeconds: 60 * 24 * 60 * 60 });
 
 module.exports = mongoose.model('Chat', chatSchema);
