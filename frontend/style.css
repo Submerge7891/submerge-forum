@@ -31,8 +31,29 @@ ul, li {
     border: none;
     font-size: 14px;
 }
+.btn-primary {
+    background-color: var(--main-color);
+    color: #fff;
+}
+.btn-primary:hover {
+    background-color: var(--main-hover);
+}
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+.btn-danger {
+    background-color: var(--danger-color);
+    color: #fff;
+}
+.btn-danger:hover {
+    background-color: #ff3838;
+}
 
-/* 主题色：核心橙色 完全贴合需求 */
+/* 主题色 */
 :root {
     --main-color: #ff7c24;
     --main-hover: #ff6a00;
@@ -46,7 +67,7 @@ ul, li {
     --info-color: #1890ff;
 }
 
-/* ========== 新增：自定义消息提示样式 ========== */
+/* 消息提示 */
 .custom-toast {
     position: fixed;
     top: 20px;
@@ -72,52 +93,7 @@ ul, li {
 .toast-warning { background-color: var(--warning-color); }
 .toast-info { background-color: var(--info-color); }
 
-/* ========== 新增：自定义确认框样式 ========== */
-.custom-confirm {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9998;
-}
-.confirm-content {
-    background-color: #fff;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    padding: 20px;
-}
-.confirm-title {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-}
-.confirm-btns {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-.confirm-input {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
-    margin: 10px 0;
-    outline: none;
-}
-.confirm-input:focus {
-    border-color: var(--main-color);
-}
-
-/* 头部导航栏 - 复刻原版置顶+橙色高亮风格 */
+/* 导航栏 */
 header {
     background-color: #fff;
     border-bottom: 1px solid var(--border-color);
@@ -146,6 +122,7 @@ header {
 .nav a {
     margin: 0 15px;
     font-size: 16px;
+    transition: color 0.2s;
 }
 .nav a:hover, .nav a.active {
     color: var(--main-color);
@@ -190,7 +167,7 @@ header {
     line-height: 16px;
 }
 
-/* 主体内容区 - 左右分栏 原版经典布局 */
+/* 主体内容区 */
 main {
     display: flex;
     margin-top: 20px;
@@ -210,60 +187,7 @@ main {
     gap: 20px;
 }
 
-/* 发帖按钮 */
-.create-post-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--main-color);
-    color: #fff;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 998;
-    transition: all 0.2s;
-}
-.create-post-btn:hover {
-    background-color: var(--main-hover);
-    transform: scale(1.05);
-}
-
-/* 发帖区（旧版，保留但隐藏） */
-.post-box {
-    display: none;
-    padding: 15px;
-    border-bottom: 1px solid var(--border-color);
-}
-.post-input {
-    width: 100%;
-    height: 60px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 10px;
-    resize: none;
-    outline: none;
-    margin-bottom: 10px;
-    transition: border 0.2s;
-}
-.post-input:focus {
-    border-color: var(--main-color);
-}
-.post-btn {
-    background-color: var(--main-color);
-    color: #fff;
-    float: right;
-}
-.post-btn:hover {
-    background-color: var(--main-hover);
-}
-
-/* 帖子列表 - 核心板块 原版样式1:1复刻 */
+/* 帖子列表 */
 .post-list {
     padding: 0 15px;
 }
@@ -297,17 +221,12 @@ main {
     font-weight: 500;
     margin-bottom: 6px;
 }
-.post-desc {
-    display: none; /* 隐藏正文，只显示标题/发布人/日期 */
-    color: var(--text-gray);
-    font-size: 14px;
-    margin-bottom: 8px;
-}
 .post-meta {
     display: flex;
     justify-content: space-between;
     font-size: 12px;
     color: var(--text-light);
+    margin-bottom: 8px;
 }
 .post-meta .tags {
     color: var(--main-color);
@@ -315,7 +234,6 @@ main {
 .post-actions {
     display: flex;
     gap: 15px;
-    margin-top: 8px;
     font-size: 12px;
     color: var(--text-light);
 }
@@ -332,7 +250,7 @@ main {
     color: var(--main-color);
 }
 
-/* 侧边栏样式 */
+/* 侧边栏卡片 */
 .side-card {
     background: #fff;
     border-radius: 8px;
@@ -371,7 +289,7 @@ main {
     font-weight: bold;
 }
 
-/* 底部信息 */
+/* 底部 */
 footer {
     margin-top: 30px;
     padding: 20px 0;
@@ -381,7 +299,7 @@ footer {
     border-top: 1px solid var(--border-color);
 }
 
-/* 模态框通用样式 */
+/* 模态框通用 */
 .modal {
     position: fixed;
     top: 0;
@@ -434,29 +352,8 @@ footer {
     justify-content: flex-end;
     gap: 10px;
 }
-.btn-primary {
-    background-color: var(--main-color);
-    color: #fff;
-}
-.btn-primary:hover {
-    background-color: var(--main-hover);
-}
-.btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-}
-.btn-secondary:hover {
-    background-color: #e0e0e0;
-}
-.btn-danger {
-    background-color: var(--danger-color);
-    color: #fff;
-}
-.btn-danger:hover {
-    background-color: #ff3838;
-}
 
-/* 登录/注册模态框 */
+/* 表单 */
 .form-group {
     margin-bottom: 15px;
 }
@@ -477,11 +374,8 @@ footer {
 .form-input:focus {
     border-color: var(--main-color);
 }
-.auth-modal .modal-content {
-    max-width: 400px;
-}
 
-/* Markdown编辑器样式 */
+/* 编辑器 */
 .editor-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -489,7 +383,6 @@ footer {
     padding: 10px;
     background-color: #f8f8f8;
     border-bottom: 1px solid var(--border-color);
-    border-radius: 4px 4px 0 0;
 }
 .editor-btn {
     padding: 5px 10px;
@@ -521,9 +414,6 @@ footer {
     font-family: monospace;
     outline: none;
 }
-.editor-textarea:focus {
-    border-color: var(--main-color);
-}
 .editor-preview {
     width: 100%;
     min-height: 100px;
@@ -540,11 +430,8 @@ footer {
     font-size: 14px;
     outline: none;
 }
-.tags-input:focus {
-    border-color: var(--main-color);
-}
 
-/* 帖子详情模态框 */
+/* 帖子详情 */
 .post-detail-header {
     padding-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
@@ -567,19 +454,15 @@ footer {
 }
 .post-detail-content img {
     max-width: 100%;
-    border-radius: 4px;
 }
 .post-detail-content pre {
     background-color: #f8f8f8;
     padding: 10px;
-    border-radius: 4px;
     overflow-x: auto;
 }
 .post-detail-content code {
     background-color: #f8f8f8;
     padding: 2px 4px;
-    border-radius: 2px;
-    font-family: monospace;
 }
 .post-detail-content blockquote {
     border-left: 4px solid var(--main-color);
@@ -609,7 +492,7 @@ footer {
     color: var(--main-color);
 }
 
-/* 评论区样式 */
+/* 评论区 */
 .comments-section {
     margin-top: 20px;
 }
@@ -631,9 +514,6 @@ footer {
     resize: none;
     outline: none;
     min-height: 80px;
-}
-.comment-input:focus {
-    border-color: var(--main-color);
 }
 .comment-list {
     display: flex;
@@ -678,26 +558,9 @@ footer {
     color: var(--main-color);
 }
 
-/* 消息中心样式 */
+/* 消息中心 */
 .messages-modal .modal-content {
     max-width: 700px;
-}
-.msg-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border-color);
-}
-.msg-tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-}
-.msg-tab.active {
-    border-bottom-color: var(--main-color);
-    color: var(--main-color);
-    font-weight: bold;
-}
-.msg-content {
-    padding: 15px 0;
 }
 .msg-item {
     padding: 10px;
@@ -731,80 +594,28 @@ footer {
 .msg-text {
     font-size: 14px;
     color: var(--text-gray);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 .msg-time {
     font-size: 12px;
     color: var(--text-light);
 }
-.admin-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
 
-/* 举报模态框 */
-.report-reason {
-    width: 100%;
-    min-height: 100px;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    resize: vertical;
-    outline: none;
-    margin-bottom: 15px;
-}
-.report-reason:focus {
-    border-color: var(--main-color);
-}
-
-/* 响应式适配 - 手机端自动适配布局 */
-@media (max-width: 992px) {
-    main {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-    }
-    .side-card {
-        flex: 1;
-    }
-}
-@media (max-width: 768px) {
-    .sidebar {
-        flex-direction: column;
-    }
-    .nav {
-        display: none;
-    }
-    .modal-content {
-        width: 100%;
-        max-width: 95%;
-    }
-    .editor-toolbar {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 15px;
-    }
-}
-
-
-/* 加载动画容器 */
+/* 加载动画 */
 .loader-container {
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: #fff;
     z-index: 99999;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 .loader-container.active {
     opacity: 1;
@@ -813,6 +624,7 @@ footer {
 .dot-jump-loader {
     display: flex;
     gap: 18px;
+    margin-bottom: 20px;
 }
 .dot {
     width: 16px;
@@ -821,6 +633,12 @@ footer {
     background: #ff9f43;
     animation: jump 1.05s linear forwards;
 }
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.25s; }
+.dot:nth-child(3) { animation-delay: 0.5s; }
+.dot:nth-child(4) { animation-delay: 0.75s; }
+.dot:nth-child(5) { animation-delay: 1.0s; }
+.dot:nth-child(6) { animation-delay: 1.25s; }
 @keyframes jump {
     0% { transform: translateY(0); }
     15% { transform: translateY(-30px); }
@@ -833,29 +651,13 @@ footer {
 .loader-text {
     color: #ff9f43;
     font-size: 18px;
-    margin-top: 20px;
+    letter-spacing: 2px;
+    opacity: 0.8;
 }
 
-/* 帖子进入动画 */
-.post-item {
-    animation: slideIn 0.3s ease;
-}
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 导航栏滑动效果 */
-.nav a.active {
-    color: var(--main-color);
-    border-bottom: 2px solid var(--main-color);
-}
-.nav a {
-    transition: all 0.2s;
+/* 响应式 */
+@media (max-width: 768px) {
+    .nav { display: none; }
+    .sidebar { width: 100%; }
+    main { flex-direction: column; }
 }
