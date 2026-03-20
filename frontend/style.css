@@ -790,3 +790,72 @@ footer {
         padding-bottom: 15px;
     }
 }
+
+
+/* 加载动画容器 */
+.loader-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #fff;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+.loader-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+.dot-jump-loader {
+    display: flex;
+    gap: 18px;
+}
+.dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ff9f43;
+    animation: jump 1.05s linear forwards;
+}
+@keyframes jump {
+    0% { transform: translateY(0); }
+    15% { transform: translateY(-30px); }
+    30% { transform: translateY(-40px); }
+    40% { transform: translateY(-38px); }
+    50% { transform: translateY(-30px); }
+    60% { transform: translateY(-15px); }
+    70% { transform: translateY(0); }
+}
+.loader-text {
+    color: #ff9f43;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+/* 帖子进入动画 */
+.post-item {
+    animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 导航栏滑动效果 */
+.nav a.active {
+    color: var(--main-color);
+    border-bottom: 2px solid var(--main-color);
+}
+.nav a {
+    transition: all 0.2s;
+}
