@@ -70,18 +70,222 @@
     </div>
 
     <footer>
-        <div class="container">
-            © 2026 Submerge 讨论区
-        </div>
+        <div class="container">© 2026 Submerge 讨论区</div>
     </footer>
 
     <div class="create-post-btn" id="create-post-btn">
         <i class="bi bi-plus"></i>
     </div>
 
-    <!-- 各种模态框（与之前类似，但需加入聊天相关） -->
-    <!-- 为简化，此处省略，实际应包含：登录、注册、发帖、帖子详情、聊天列表、聊天窗口等 -->
-    <!-- 由于篇幅，此处只给出骨架，具体内容需要根据 script.js 渲染 -->
+    <!-- 模态框：登录 -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">登录</div>
+                <span class="modal-close" id="login-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="login-username" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="login-password" class="form-input">
+                </div>
+                <div id="login-error" style="color:red; display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="login-cancel">取消</button>
+                <button class="btn btn-primary" id="login-submit">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：注册 -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">注册</div>
+                <span class="modal-close" id="register-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="register-username" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="register-email" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="register-password" class="form-input">
+                </div>
+                <div id="register-error" style="color:red; display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="register-cancel">取消</button>
+                <button class="btn btn-primary" id="register-submit">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：发帖 -->
+    <div class="modal" id="editor-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">发布新帖子</div>
+                <span class="modal-close" id="editor-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="post-title" class="form-input">
+                </div>
+                <div class="editor-toolbar">
+                    <button class="editor-btn" data-action="bold"><i class="bi bi-type-bold"></i> 粗体</button>
+                    <button class="editor-btn" data-action="italic"><i class="bi bi-type-italic"></i> 斜体</button>
+                    <button class="editor-btn" data-action="strikethrough"><i class="bi bi-type-strikethrough"></i> 删除线</button>
+                    <button class="editor-btn" data-action="heading"><i class="bi bi-type-h1"></i> 标题</button>
+                    <button class="editor-btn" data-action="list"><i class="bi bi-list-ul"></i> 列表</button>
+                    <button class="editor-btn" data-action="code"><i class="bi bi-code"></i> 代码</button>
+                    <button class="editor-btn" data-action="quote"><i class="bi bi-quote"></i> 引用</button>
+                    <button class="editor-btn" data-action="link"><i class="bi bi-link"></i> 链接</button>
+                    <button class="editor-btn" data-action="image"><i class="bi bi-image"></i> 图片</button>
+                </div>
+                <div class="editor-container">
+                    <textarea id="post-content" class="editor-textarea" rows="10"></textarea>
+                    <div class="form-group">
+                        <label>预览</label>
+                        <div id="editor-preview" class="editor-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" id="post-tags" class="form-input" placeholder="例如：前端,技术,求助">
+                    </div>
+                </div>
+                <div id="editor-error" style="color:red; display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="editor-cancel">取消</button>
+                <button class="btn btn-primary" id="editor-submit">发布</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：帖子详情 -->
+    <div class="modal" id="post-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="detail-title"></div>
+                <span class="modal-close" id="post-detail-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="post-detail-meta" id="detail-meta"></div>
+                <div class="post-detail-content" id="detail-content"></div>
+                <div class="post-detail-actions">
+                    <span class="post-detail-action-btn" id="like-post-btn"><i class="bi bi-heart"></i> 点赞 <span id="like-count">0</span></span>
+                    <span class="post-detail-action-btn" id="collect-post-btn"><i class="bi bi-star"></i> 收藏</span>
+                    <span class="post-detail-action-btn" id="report-post-btn"><i class="bi bi-flag"></i> 举报</span>
+                    <span id="admin-actions" style="display: none;">
+                        <button class="btn btn-danger btn-sm" id="ban-post-btn">封禁帖子</button>
+                        <button class="btn btn-secondary btn-sm" id="essence-post-btn">设为精华</button>
+                        <button class="btn btn-secondary btn-sm" id="top-post-btn">置顶</button>
+                        <button class="btn btn-danger btn-sm" id="ban-user-btn">封禁用户</button>
+                    </span>
+                </div>
+                <div class="comments-section">
+                    <div class="comments-title">评论区</div>
+                    <div class="comment-input-box">
+                        <textarea id="comment-input" class="comment-input" placeholder="发表评论..."></textarea>
+                        <button class="btn btn-primary" id="submit-comment-btn">发布</button>
+                    </div>
+                    <div id="comment-list" class="comment-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="post-detail-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：举报 -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">举报</div>
+                <span class="modal-close" id="report-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>举报原因</label>
+                    <textarea id="report-reason" class="report-reason" rows="3"></textarea>
+                </div>
+                <div id="report-error" style="color:red; display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="report-cancel">取消</button>
+                <button class="btn btn-danger" id="report-submit">提交举报</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：聊天列表 -->
+    <div class="modal" id="chat-list-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">我的聊天</div>
+                <span class="modal-close" id="chat-list-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="chat-search" placeholder="搜索聊天" class="form-input">
+                    <button id="create-chat-btn" class="btn btn-primary" style="margin-top: 10px;">创建新聊天</button>
+                </div>
+                <div id="chat-list-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="chat-list-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：聊天窗口 -->
+    <div class="modal" id="chat-room-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="chat-title"></div>
+                <span class="modal-close" id="chat-room-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="chat-messages" style="height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 10px;"></div>
+                <div class="chat-input-box">
+                    <textarea id="chat-message-input" class="form-input" rows="2" placeholder="输入消息..."></textarea>
+                    <button id="send-chat-message" class="btn btn-primary">发送</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="chat-room-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：消息中心 -->
+    <div class="modal" id="messages-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">消息中心</div>
+                <span class="modal-close" id="messages-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="messages-list" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="messages-cancel">关闭</button>
+            </div>
+        </div>
+    </div>
 
     <script src="config.js"></script>
     <script src="script.js"></script>
